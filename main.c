@@ -6,7 +6,7 @@
 #define TRUE 1
 
 /* string constants to avoid repetition */
-const char prompt[25] = "Enter No of Iterations: ";
+const char prompt[25] = "\nEnter No of Iterations: ";
 const char h_bar[74] =
     "+--------+--------+--------+--------+--------+--------+--------+--------+";
 
@@ -48,28 +48,36 @@ enum DIRECTIONS {
 float q_table[10][10][4] = { 0 };  /* Table of Q(s,a) values to be updated */
 float q_table_prime[10][10][4] = { 0 };
                                   /* Table to contain new q values */
-char policy[10][10][9];           /* Table to contain strings to represent
+char policy[10][10];              /* Table to contain strings to represent
                                       policy and rewards                  */
 
+void init_policy();
 void print_values();
 void print_policy();
-float max_value(float* values);
+float max_value(int x, int y);
 void run_iterations(int n);
 float er(int x, int y, int a);
 void q_copy(float dest[10][10][4], float src[10][10][4]);
 void get_probs(float * p_up, float * p_down, float * p_left, float * p_right, int a);
 
 int main() {
-  print_values();
+  printf(
+    "CS-5001: HW#2\nProgrammer: Matthew Healy <mhrh3>\nDiscount GAMMA = %3.1f\n",
+    GAMMA);
+  init_policy();
   int n = 0;
+  int count = 0;
   do {
     printf(prompt);
     scanf("%d", &n);
     if (n > 0) {
+      count += n;
+      printf("\nValues after %d iterations:\n\n", count);
       run_iterations(n);
       print_values();
     }
   } while (n > 0);
+  printf("\nPolicy:\n\n");
   print_policy();
   return 0;
 }
@@ -84,10 +92,10 @@ void run_iterations(int n) {
           for (int a = 0; a < 4; a++) {
             temp_val = 0;
             get_probs(&p_up, &p_down, &p_left, &p_right, a);
-            temp_val +=   (p_up    * max_value(q_table[x][y + 1]))
-                        + (p_down  * max_value(q_table[x][y - 1]))
-                        + (p_left  * max_value(q_table[x - 1][y]))
-                        + (p_right * max_value(q_table[x + 1][y]));
+            temp_val +=   (p_up    * max_value(x, (y + 1)))
+                        + (p_down  * max_value(x, (y - 1)))
+                        + (p_left  * max_value((x - 1), y))
+                        + (p_right * max_value((x + 1), y));
 
             q_table_prime[x][y][a] = er(x, y, a) + (GAMMA * temp_val);
           } /* end action iteration */
@@ -113,6 +121,11 @@ float er(int x, int y, int a) {
 
   return res;
 }
+
+
+/***********************************************
+ * HELPER FUNCTIONS
+ ***********************************************/
 
 void get_probs(float * p_up, float * p_down, float * p_left, float * p_right, int a) {
     switch(a) {
@@ -151,41 +164,45 @@ void get_probs(float * p_up, float * p_down, float * p_left, float * p_right, in
   return;
 }
 
-/***********************************************
- * HELPER FUNCTIONS
- ***********************************************/
+void init_policy() {
+  for (int i = 0; i < 10; i++) {
+    for (int j = 0; j < 10; j++) {
+      policy[i][j] = ' ';
+    }
+  }
+}
+
 
 void print_values() {
   printf(h_bar);
   printf("\n");
   for (int y = 8; y >= 1; y--) {
     for (int x = 1; x < 9; x++) {
-      printf("| ");
+      printf("|");
       if (reward[x][y] == 0) {
-        printf("%6.3f", max_value(q_table[x][y]));
+        printf(" %6.3f ", max_value(x, y));
       } else {
         switch(reward[x][y]) {
           case WALL:
-            printf("######");
+            printf(" ###### ");
             break;
           case DNUT:
-            printf(" DUNUT");
+            printf("  DUNUT ");
             break;
           case ONI:
-            printf("  ONI ");
+            printf("   ONI  ");
             break;
           case FIRE:
-            printf(" FIRE ");
+            printf("  FIRE  ");
             break;
           case CAKE:
-            printf(" CAKE ");
+            printf("  CAKE  ");
             break;
           default:
-            printf("??????");
+            printf(" ?????? ");
             break;
         }
       }
-      printf(" ");
     }
     printf("|\n");
   }
@@ -197,10 +214,33 @@ void print_values() {
 void print_policy() {
   printf(h_bar);
   printf("\n");
-  for (int y = 9; y >= 0; y--) {
-    for (int x = 0; x < 10; x++) {
+  for (int y = 8; y >= 1; y--) {
+    for (int x = 1; x < 9; x++) {
       printf("|");
-      printf("%s", policy[x][y]);
+      if (reward[x][y] == 0) {
+        printf("    %c   ", policy[x][y]);
+      } else {
+        switch(reward[x][y]) {
+          case WALL:
+            printf(" ###### ");
+            break;
+          case DNUT:
+            printf(" DUNUT  ");
+            break;
+          case ONI:
+            printf("   ONI  ");
+            break;
+          case FIRE:
+            printf("  FIRE  ");
+            break;
+          case CAKE:
+            printf("  CAKE  ");
+            break;
+          default:
+            printf(" ?????? ");
+            break;
+        }
+      }
     }
     printf("|\n");
   }
@@ -208,12 +248,24 @@ void print_policy() {
   printf("\n");
 } /* print_policy() */
 
-float max_value(float * values) {
+float max_value(int x, int y) {
   float max = 0.0f;
-  max = MAX(max,values[UP]);
-  max = MAX(max,values[DOWN]);
-  max = MAX(max,values[LEFT]);
-  max = MAX(max,values[RIGHT]);
+  if (q_table[x][y][UP] > max) {
+    max = q_table[x][y][UP];
+    policy[x][y] = '^';
+  }
+  if (q_table[x][y][DOWN] > max) {
+    max = q_table[x][y][DOWN];
+    policy[x][y] = 'V';
+  }
+  if (q_table[x][y][LEFT] > max) {
+    max = q_table[x][y][LEFT];
+    policy[x][y] = '<';
+  }
+  if (q_table[x][y][RIGHT] > max) {
+    max = q_table[x][y][RIGHT];
+    policy[x][y] = '>';
+  }
   return max;
 } /* max_value() */
 
