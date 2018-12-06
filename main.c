@@ -37,16 +37,15 @@ float q_table_prime[10][10][4] = { 0 };
 char policy[10][10];              /* Table to contain strings to represent
                                       policy and rewards                  */
 
-void init_policy();
-void print_values();
-void print_policy();
-float value(int x, int y);
+
 float exp_reward(int x, int y, int a);
-void value_iterate(int n);
-float prob(int x, int y, int a);
-void q_copy(float dest[10][10][4], float src[10][10][4]);
-float er(int x, int y, int a);
 void get_probs(float * p_up, float * p_down, float * p_left, float * p_right, int a);
+void init_policy();
+void print_policy();
+void print_values();
+float value(int x, int y);
+void value_iterate(int n);
+void q_copy(float dest[10][10][4], float src[10][10][4]);
 
 const int reward[10][10] =
 { { WALL, WALL, WALL, WALL, WALL, WALL, WALL, WALL, WALL, WALL },
@@ -60,11 +59,12 @@ const int reward[10][10] =
   { WALL,    0,    0,    0,    0,    0,    0,    0,    0, WALL },
   { WALL, WALL, WALL, WALL, WALL, WALL, WALL, WALL, WALL, WALL } };
 
+/**************************************
+ * PROCEDURE: main()
+ *************************************/
 int main() {
   int count;
   int n;
-
-  print_values();
 
   printf(
     "CS-5001: HW#2\nProgrammer: Matthew Healy <mhrh3>\nDiscount GAMMA = %3.1f\n",
@@ -83,6 +83,10 @@ int main() {
   return 0;
 }
 
+/******************************************************
+ * PROCEDURE: value_iterate()
+ * DESCRIPTION: Iterates Q-Tables given number of times
+ *****************************************************/
 void value_iterate(int n) {
   float val_tmp;
   for (int i = 0; i < n; i++){
@@ -94,7 +98,7 @@ void value_iterate(int n) {
           val_tmp += prob(-1,  0, a) * value(x - 1, y    );
           val_tmp += prob( 0,  1, a) * value(x,     y + 1);
           val_tmp += prob( 0, -1, a) * value(x,     y -1 );
-          q_table_prime[x][y][a] = er(x, y, a) + (GAMMA * val_tmp);
+          q_table_prime[x][y][a] = exp_reward(x, y, a) + (GAMMA * val_tmp);
         }
       }
     }
@@ -124,15 +128,6 @@ float value(int x, int y) {
 } /* value() */
 
 float exp_reward(int x, int y, int a) {
-  float res = 0.0f;
-  res += prob( 1,  0, a) * reward[x + 1][y];
-  res += prob(-1,  0, a) * reward[x - 1][y];
-  res += prob( 0,  1, a) * reward[x][y + 1];
-  res += prob( 0, -1, a) * reward[x][y -1];
-  return res;
-}
-
-float er(int x, int y, int a) {
   float p_up, p_down, p_left, p_right;
   float res = 0.0f;
 
@@ -144,6 +139,10 @@ float er(int x, int y, int a) {
 
   return res;
 }
+
+/************************************
+* HELPER FUNCTIONS
+************************************/
 
 void get_probs(float * p_up, float * p_down, float * p_left, float * p_right, int a) {
   switch(a) {
@@ -180,50 +179,6 @@ void get_probs(float * p_up, float * p_down, float * p_left, float * p_right, in
       break;
   }
   return;
-}
-
-/************************************
-* HELPER FUNCTIONS
-************************************/
-
-float prob(int x, int y, int a) {
-  if (x == 0) {
-    if (y == 1) {
-      if (a == UP) {
-        return 0.85f;
-      } else if (a == DOWN) {
-        return 0.0f;
-      } else {
-        return 0.09f;
-      }
-    } else {
-      if (a == UP) {
-        return 0.0f;
-      } else if (a == DOWN) {
-        return 0.85f;
-      } else {
-        return 0.09f;
-      }
-    }
-  } else {
-    if (x == 1) {
-      if (a == RIGHT) {
-        return 0.85f;
-      } else if (a == LEFT) {
-        return 0.0f;
-      } else {
-        return 0.09f;
-      }
-    } else {
-      if (a == RIGHT) {
-        return 0.0f;
-      } else if (a == LEFT) {
-        return 0.85f;
-      } else {
-        return 0.09f;
-      }
-    }
-  }
 }
 
 void print_values() {
