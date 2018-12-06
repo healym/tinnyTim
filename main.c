@@ -88,7 +88,7 @@ void run_iterations(int n) {
   for(int i = 0; i < n; i++) {
     for (int x = 1; x < 9; x++) { /* all steppable xs */
       for (int y = 1; y < 9; y++) { /* all stappable ys */
-        if (reward[x][y] == 0) { /* only consider valid locations */
+        //if (reward[x][y] == 0) { /* only consider valid locations */
           for (int a = 0; a < 4; a++) {
             temp_val = 0;
             get_probs(&p_up, &p_down, &p_left, &p_right, a);
@@ -99,7 +99,7 @@ void run_iterations(int n) {
 
             q_table_prime[x][y][a] = er(x, y, a) + (GAMMA * temp_val);
           } /* end action iteration */
-        } /* end if */
+        //} /* end if */
       } /* end y iteration */
     } /* end x iteration */
     q_copy(q_table, q_table_prime); // copy new table into old table
