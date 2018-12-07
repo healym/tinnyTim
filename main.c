@@ -38,16 +38,55 @@ char policy[10][10];             /* Table to contain strings to
                                       represent policy and rewards  */
 
 
-float exp_reward(int x, int y, int a);
-void get_probs(float * p_up, float * p_down, float * p_left, float * p_right, int a);
-void init_policy();
-void print_policy();
-void print_values();
-float value(int x, int y);
-void value_iterate(int n);
-void q_copy(float dest[10][10][4], float src[10][10][4]);
+float exp_reward
+  (
+  int x,
+  int y,
+  int a
+  );
 
-const int reward[10][10] =
+void get_probs
+  (
+  float * p_up,
+  float * p_down,
+  float * p_left,
+  float * p_right,
+  int a
+  );
+
+void init_policy
+  (
+  void
+  );
+
+void print_policy
+  (
+  void
+  );
+
+void print_values
+  (
+  void
+  );
+
+float value
+  (
+  int x,
+  int y
+  );
+
+void value_iterate
+  (
+  int n
+  );
+
+void q_copy
+  (
+  float dest[10][10][4],
+  float src[10][10][4]
+  );
+
+const int reward[10][10] =        /* map of rewards per location    */
 { { WALL, WALL, WALL, WALL, WALL, WALL, WALL, WALL, WALL, WALL },
   { WALL,    0,    0,    0,    0,    0,    0,    0,    0, WALL },
   { WALL,    0,    0,    0,    0, FIRE, WALL,    0,    0, WALL },
@@ -115,11 +154,10 @@ void value_iterate
   }
 } /* value_iterate() */
 
-/*************************************************
+/***********************************************************
  * PROCEDURE: value()
- * DESCRIPTION: Returns maximum value of
- *               Q(<x,y>, a) for every a
- ************************************************/
+ * DESCRIPTION: Returns max value of Q(s, a) for every a
+ **********************************************************/
 float value
   (
   int x,                          /* x-coordinate of position       */
@@ -163,10 +201,12 @@ float exp_reward(int x, int y, int a) {
 * HELPER FUNCTIONS
 ************************************/
 
-/*************************************************
+/***********************************************************
  * PROCEDURE: get_probs()
- * DESCRIPTION: 
- ************************************************/
+ * DESCRIPTION: Loads passed probabilities with the
+ *               likelihood that Tim will move in that
+ *               direction, given the passed action
+ **********************************************************/
 void get_probs
   (
   float * p_up,                   /* probability for moving up      */
@@ -179,7 +219,7 @@ void get_probs
   /* For each action, moving in the given direction has a probability
       of 85%, moving in the opposite direction has a probability
       of 0%, and moving in an orthogonal direction has a probability
-      of 9%                                                          */
+      of 9%                                                         */
   switch(a) {
     case UP:
       *p_up    = 0.85f;
@@ -217,11 +257,15 @@ void get_probs
   return;
 } /* get_probs() */
 
-/*************************************************
- * PROCEDURE: 
- * DESCRIPTION: 
- ************************************************/
-void print_values()
+/***********************************************************
+ * PROCEDURE: print_values()
+ * DESCRIPTION: Prints a grid of values corresponding to
+ *               the V(s) for each reachable location
+ **********************************************************/
+void print_values
+  (
+  void
+  )
 {
   printf(h_bar);
   printf("\n");
@@ -260,11 +304,15 @@ void print_values()
 } /* print_values() */
 
 
-/*************************************************
- * PROCEDURE: 
- * DESCRIPTION: 
- ************************************************/
-void print_policy()
+/***********************************************************
+ * PROCEDURE: print_policy()
+ * DESCRIPTION: prints a grid of string representations
+ *               of the optimal policy for each cell
+ **********************************************************/
+void print_policy
+  (
+  void
+  )
 {
   printf(h_bar);
   printf("\n");
@@ -302,10 +350,11 @@ void print_policy()
   printf("\n");
 } /* print_policy() */
 
-/*************************************************
- * PROCEDURE: 
- * DESCRIPTION: 
- ************************************************/
+/***********************************************************
+ * PROCEDURE: q_copy()
+ * DESCRIPTION: copies all values from the source Q table
+                into the destination Q table
+ **********************************************************/
 void q_copy
   (
   float dest[10][10][4],          /* q-table to write to            */
