@@ -1,7 +1,7 @@
 /*********************************************************************
 *
-*   MODULE:
-*       main.c
+*   HEADER:
+*       tinny_tim.h - Definitions for Tinny Tim simulation
 *
 *   Copyright 2018 by Matthew Cooper Healy <mhealy@mst.edu>
 *
