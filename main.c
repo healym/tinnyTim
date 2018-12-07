@@ -31,11 +31,11 @@ enum DIRECTIONS {
   RIGHT
 };
 
-float q_table[10][10][4] = { 0 };  /* Table of Q(s,a) values to be updated */
+float q_table[10][10][4] = { 0 };/* Table of Q(s,a)                 */
 float q_table_prime[10][10][4] = { 0 };
-                                  /* Table to contain new q values */
-char policy[10][10];              /* Table to contain strings to represent
-                                      policy and rewards                  */
+                                 /* Table to contain new q values   */
+char policy[10][10];             /* Table to contain strings to
+                                      represent policy and rewards  */
 
 
 float exp_reward(int x, int y, int a);
@@ -62,7 +62,11 @@ const int reward[10][10] =
 /**************************************
  * PROCEDURE: main()
  *************************************/
-int main() {
+int main
+  (
+  void
+  )
+{
   int count;
   int n;
 
@@ -81,15 +85,20 @@ int main() {
   }
   print_policy();
   return 0;
-}
+} /* main() */
 
-/******************************************************
+/*************************************************
  * PROCEDURE: value_iterate()
- * DESCRIPTION: Iterates Q-Tables given number of times
- *****************************************************/
-void value_iterate(int n) {
+ * DESCRIPTION: Iterates Q-Tables given number
+ *               of times
+ ************************************************/
+void value_iterate
+  (
+  int n                           /* number of times to iterate     */
+  )
+{
   float val_tmp;
-  for (int i = 0; i < n; i++){
+  for (int i = 0; i < n; i++) {
     for (int x = 1; x < 9; x++) {    // For every possible
       for (int y = 1; y < 9; y++) {  // location <x,y> and
         for (int a = 0; a < 4; a++) { // action a
@@ -104,9 +113,19 @@ void value_iterate(int n) {
     }
     q_copy(q_table, q_table_prime);
   }
-}
+} /* value_iterate() */
 
-float value(int x, int y) {
+/*************************************************
+ * PROCEDURE: value()
+ * DESCRIPTION: Returns maximum value of
+ *               Q(<x,y>, a) for every a
+ ************************************************/
+float value
+  (
+  int x,                          /* x-coordinate of position       */
+  int y                           /* y-coordinate of position       */
+  )
+{
   float max = 0.0f;
   if (q_table[x][y][UP] > max) {
     max = q_table[x][y][UP];
@@ -138,13 +157,29 @@ float exp_reward(int x, int y, int a) {
   res += (p_right * reward[x + 1][y]);
 
   return res;
-}
+} /* value() */
 
 /************************************
 * HELPER FUNCTIONS
 ************************************/
 
-void get_probs(float * p_up, float * p_down, float * p_left, float * p_right, int a) {
+/*************************************************
+ * PROCEDURE: get_probs()
+ * DESCRIPTION: 
+ ************************************************/
+void get_probs
+  (
+  float * p_up,                   /* probability for moving up      */
+  float * p_down,                 /* probability for moving down    */
+  float * p_left,                 /* probability for moving left    */
+  float * p_right,                /* probability for moving right   */
+  int a                           /* action taken by Tinny Tim      */
+  )
+{
+  /* For each action, moving in the given direction has a probability
+      of 85%, moving in the opposite direction has a probability
+      of 0%, and moving in an orthogonal direction has a probability
+      of 9%                                                          */
   switch(a) {
     case UP:
       *p_up    = 0.85f;
@@ -175,13 +210,19 @@ void get_probs(float * p_up, float * p_down, float * p_left, float * p_right, in
       break;
 
     default:
+      /* Should be unreachable. Error should be logged. */
       printf("ILLEGAL ACTION REACHED!\n");
       break;
   }
   return;
-}
+} /* get_probs() */
 
-void print_values() {
+/*************************************************
+ * PROCEDURE: 
+ * DESCRIPTION: 
+ ************************************************/
+void print_values()
+{
   printf(h_bar);
   printf("\n");
   for (int y = 8; y >= 1; y--) {
@@ -219,7 +260,12 @@ void print_values() {
 } /* print_values() */
 
 
-void print_policy() {
+/*************************************************
+ * PROCEDURE: 
+ * DESCRIPTION: 
+ ************************************************/
+void print_policy()
+{
   printf(h_bar);
   printf("\n");
   for (int y = 8; y >= 1; y--) {
@@ -256,7 +302,16 @@ void print_policy() {
   printf("\n");
 } /* print_policy() */
 
-void q_copy(float dest[10][10][4], float src[10][10][4]) {
+/*************************************************
+ * PROCEDURE: 
+ * DESCRIPTION: 
+ ************************************************/
+void q_copy
+  (
+  float dest[10][10][4],          /* q-table to write to            */
+  float src[10][10][4]            /* q-table to read from           */
+  )
+{
   for (int x = 0; x < 10; x++) {
     for (int y = 0; y < 10; y++) {
       for (int a = 0; a < 4; a++) {
