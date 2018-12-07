@@ -127,9 +127,10 @@ int main
 } /* main() */
 
 /*************************************************
- * PROCEDURE: value_iterate()
- * DESCRIPTION: Iterates Q-Tables given number
- *               of times
+ * PROCEDURE NAME:
+ *     value_iterate()
+ * DESCRIPTION:
+ *     Iterates Q-Tables given number of times
  ************************************************/
 void value_iterate
   (
