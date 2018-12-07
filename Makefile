@@ -10,3 +10,4 @@ main.o: main.c tinny_tim.h
 clean:
 	-@rm -f tinnyTim
 	-@rm -f *.o
+
